@@ -18,7 +18,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import com.ss.task.dao.shop.details.impl.ShopDetailsDaoImpl;
+import com.ss.task.shop.details.dao.impl.ShopDetailsDaoImpl;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ShopDetailsDaoTest {

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.ss.task.dao.shop.details.impl;
+package com.ss.task.shop.details.dao.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.ss.task.shop.details.dao.ShopDetailsDao;
+import com.ss.task.shop.details.request.vo.ShopDetailsVo;
 
 /**
  * @author Saurav Singh
@@ -25,18 +26,12 @@ public class ShopDetailsDaoImpl implements ShopDetailsDao {
 	@Qualifier("jdbcTemplate")
 	private JdbcTemplate jdbcTemplate;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.ss.task.shop.details.dao.ShopDetailsDao#saveShopDetails(java.lang.String,
-	 * java.lang.String, int)
-	 */
 	@Override
-	public int saveShopDetails(final String shopName, final String shopAddNum, final int shopPostCode)
-			throws Exception {
-		Object[] params = { shopName, shopAddNum, shopPostCode };
-		LOGGER.debug("Starting method {} with params - {} ", "saveShopDetails", params);
-		String saveShopDetailsQuery = "insert into shop_details values(?, ?, ?)";
+	public int saveShopDetails(final ShopDetailsVo shopDetailsVo) throws Exception {
+		LOGGER.debug("Starting method {} with params - {} ", "saveShopDetails", shopDetailsVo.toString());
+		Object[] params = { shopDetailsVo.getShopName(), shopDetailsVo.getShopAddress(), shopDetailsVo.getShopPostalCode(),
+				shopDetailsVo.getShopLat(), shopDetailsVo.getShopLng() };
+		String saveShopDetailsQuery = "insert into shop_details values(?, ?, ?, ?, ?)";
 		return jdbcTemplate.update(saveShopDetailsQuery, params);
 	}
 

@@ -4,28 +4,29 @@ import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ShopAddress implements Serializable{
+public class ShopAddress implements Serializable {
 
 	private static final long serialVersionUID = -8816046099625445967L;
 
-	@JsonProperty("number")
-	private String addressNumber;
+	@JsonProperty("address")
+	private String address;
 
 	@JsonProperty("postCode")
 	private Integer addressPostCode;
 
 	/**
-	 * @return the addressNumber
+	 * @return the address
 	 */
-	public String getAddressNumber() {
-		return addressNumber;
+	public String getAddress() {
+		return address;
 	}
 
 	/**
-	 * @param addressNumber the addressNumber to set
+	 * @param address
+	 *            the address to set
 	 */
-	public void setAddressNumber(String addressNumber) {
-		this.addressNumber = addressNumber;
+	public void setAddress(String address) {
+		this.address = address;
 	}
 
 	/**
@@ -36,21 +37,23 @@ public class ShopAddress implements Serializable{
 	}
 
 	/**
-	 * @param addressPostCode the addressPostCode to set
+	 * @param addressPostCode
+	 *            the addressPostCode to set
 	 */
 	public void setAddressPostCode(Integer addressPostCode) {
 		this.addressPostCode = addressPostCode;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("ShopAddress [addressNumber=").append(addressNumber).append(", addressPostCode=")
-				.append(addressPostCode).append("]");
+		builder.append("ShopAddress [address=").append(address).append(", addressPostCode=").append(addressPostCode).append("]");
 		return builder.toString();
 	}
-	
+
 }
