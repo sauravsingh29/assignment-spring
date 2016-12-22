@@ -5,20 +5,16 @@ import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
-import javax.sql.DataSource;
-
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import com.ss.task.shop.details.dao.impl.ShopDetailsDaoImpl;
+import com.ss.task.shop.details.request.vo.ShopDetailsVo;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ShopDetailsDaoTest {
@@ -27,22 +23,25 @@ public class ShopDetailsDaoTest {
 	private ShopDetailsDao shopDetailsDao = new ShopDetailsDaoImpl();
 
 	@Mock
-	JdbcTemplate jdbcTemplate;
-
-	@Mock
-	DataSource dataSource;
-
-
+	private JdbcTemplate jdbcTemplate;
+	
+	private ShopDetailsVo shopDetailsVo; 
+	
 	@Before
-	public void setUp() throws Exception {
+	public void setUp(){
+		shopDetailsVo = new ShopDetailsVo("ABC", "London", 12345, "18.264797", "-23.9497979");
 	}
 
 	@Test
 	public void test_saveShopDetails_sccuess() throws Exception {
-		int expected = 1;
-		when(jdbcTemplate.update(anyString(), (Object[]) anyObject())).thenReturn(expected);
-		int actual = shopDetailsDao.saveShopDetails("Abc", "119", 60169);
-		assertEquals(expected, actual);
+		when(jdbcTemplate.update(anyString(), (Object[]) anyObject())).thenReturn(0);
+		assertEquals(0, shopDetailsDao.saveShopDetails(shopDetailsVo));
+	}
+	
+	@Test(expected = Exception.class)
+	public void test_saveShopDetails_Failed() throws Exception {
+		when(jdbcTemplate.update(anyString(), (Object[]) anyObject())).thenThrow(new Exception());
+		shopDetailsDao.saveShopDetails(shopDetailsVo);
 	}
 
 }

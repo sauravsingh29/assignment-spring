@@ -21,6 +21,7 @@ import com.ss.task.shop.details.request.vo.ShopDetailsVo;
 public class ShopDetailsDaoImpl implements ShopDetailsDao {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ShopDetailsDaoImpl.class);
+	public static final String SAVE_SHOP_DETAILS = "insert into shop_details values(?, ?, ?, ?, ?)";
 
 	@Autowired
 	@Qualifier("jdbcTemplate")
@@ -31,8 +32,7 @@ public class ShopDetailsDaoImpl implements ShopDetailsDao {
 		LOGGER.debug("Starting method {} with params - {} ", "saveShopDetails", shopDetailsVo.toString());
 		Object[] params = { shopDetailsVo.getShopName(), shopDetailsVo.getShopAddress(), shopDetailsVo.getShopPostalCode(),
 				shopDetailsVo.getShopLat(), shopDetailsVo.getShopLng() };
-		String saveShopDetailsQuery = "insert into shop_details values(?, ?, ?, ?, ?)";
-		return jdbcTemplate.update(saveShopDetailsQuery, params);
+		return jdbcTemplate.update(SAVE_SHOP_DETAILS, params);
 	}
 
 }
