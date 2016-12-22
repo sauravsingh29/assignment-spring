@@ -32,7 +32,11 @@ public class ShopDetailsDaoImpl implements ShopDetailsDao {
 		LOGGER.debug("Starting method {} with params - {} ", "saveShopDetails", shopDetailsVo.toString());
 		Object[] params = { shopDetailsVo.getShopName(), shopDetailsVo.getShopAddress(), shopDetailsVo.getShopPostalCode(),
 				shopDetailsVo.getShopLat(), shopDetailsVo.getShopLng() };
-		return jdbcTemplate.update(SAVE_SHOP_DETAILS, params);
+		try{
+			return jdbcTemplate.update(SAVE_SHOP_DETAILS, params);
+		} catch (RuntimeException e){
+			throw new RuntimeException("Unable to add Shop address at this moment! Please check request or try later.", e.getCause());
+		}
 	}
 
 }

@@ -70,9 +70,8 @@ public class ShopDetailsVo implements Serializable {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("ShopDetailsVo [shopName=").append(shopName).append(", shopAddress=").append(shopAddress).append(", shopPostalCode=")
-				.append(shopPostalCode).append(", shopLng=").append(shopLng).append(", shopLat=").append(shopLat).append("]");
+		builder.append("shopName=").append(shopName).append(", shopAddress=").append(shopAddress).append(", shopPostalCode=")
+				.append(shopPostalCode).append(", shopLng=").append(shopLng).append(", shopLat=").append(shopLat);
 		return builder.toString();
 	}
-
 }

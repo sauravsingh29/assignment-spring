@@ -93,7 +93,7 @@
 		<dependency>
 			<groupId>com.google.maps</groupId>
 			<artifactId>google-maps-services</artifactId>
-			<version>0.1.11</version>
+			<version>0.1.15</version>
 			<scope>compile</scope>
 		</dependency>
 
@@ -101,9 +101,7 @@
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
 		</dependency>
-
 	</dependencies>
-
 	<build>
 		<plugins>
 			<plugin>

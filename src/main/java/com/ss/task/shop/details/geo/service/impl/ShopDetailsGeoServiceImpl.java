@@ -1,8 +1,13 @@
 package com.ss.task.shop.details.geo.service.impl;
 
+import static com.ss.task.dao.shop.details.constants.ShopDetailsConstants.LATITUDE_KEY;
+import static com.ss.task.dao.shop.details.constants.ShopDetailsConstants.LONGITUDE_KEY;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import com.ss.task.shop.details.geo.response.GeoLngLatResponse;
+import com.ss.task.geo.response.GeoCodingResponse;
+import com.ss.task.geo.response.Results;
 import com.ss.task.shop.details.geo.service.ShopDetailsGeoService;
 
 /**
@@ -32,38 +38,52 @@ public class ShopDetailsGeoServiceImpl implements ShopDetailsGeoService {
 	@Value("${google.lnglat.url}")
 	private String geoLatngUrl;
 
+	@Value("${google.location.url}")
+	private String geoLocationUrl;
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.ss.task.shop.details.geo.service.ShopDetailsGeoService#getLngLatByAddress(java.lang.String)
+	 * @see com.ss.task.shop.details.geo.service.ShopDetailsGeoService#
+	 * getLngLatByAddress(java.lang.String)
 	 */
 	@Override
 	public Map<String, String> getLngLatByAddress(final String address) throws RuntimeException {
 		LOGGER.debug("Started method {} - params {}", "getLngLatByAddress", address);
-		final String url = geoLatngUrl + address;
+		final String url = geoLatngUrl + encodedUrl(address);
+		System.out.println(url);
 		try {
-			final GeoLngLatResponse geoLngLatResponse = restTemplate.getForObject(url, GeoLngLatResponse.class);
+			final GeoCodingResponse geocodingResult = restTemplate.getForObject(url, GeoCodingResponse.class);
 			final Map<String, String> returnMap = new HashMap<>();
-			buildReturnMapFromResponse(geoLngLatResponse.get(), returnMap);
+			Results[] results = geocodingResult.getResults();
+			for (Results res : results) {
+				returnMap.put(LATITUDE_KEY, Double.toString(res.getGeometry().getLocation().getLat()));
+				returnMap.put(LONGITUDE_KEY, Double.toString(res.getGeometry().getLocation().getLng()));
+			}
 			return returnMap;
 		} catch (RestClientException e) {
 			LOGGER.error("Failed to find location lng lat. Exception {}", e);
-			throw new RuntimeException("Failed to find location latitude/longitude", e.getCause());
+			throw new RuntimeException("Failed to find latitude/longitude of address", e.getCause());
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private void buildReturnMapFromResponse(final Map<String, Object> geoLngLatResponseMap, final Map<String, String> returnMap) {
-		for (Entry<String, Object> entry : geoLngLatResponseMap.entrySet()) {
-			if (entry.getValue() instanceof Map) {
-				buildReturnMapFromResponse((Map<String, Object>) entry.getValue(), returnMap);
-			}
-			if (entry.getKey().equalsIgnoreCase("location") && entry.getValue() instanceof Map) {
-				Map<String, String> latLngMap = (Map<String, String>) entry.getValue();
-				returnMap.putAll(latLngMap);
-				break;
-			}
+	@Override
+	public GeoCodingResponse getNearestShopDetails(final String latlngParam) throws RuntimeException {
+		LOGGER.debug("Started method {} - params {}", "getNearestShopDetails", latlngParam);
+		final String url = geoLocationUrl + encodedUrl(latlngParam);
+		try{
+			return restTemplate.getForObject(url, GeoCodingResponse.class);
+		} catch (RestClientException e) {
+			LOGGER.error("Failed to find location lng lat. Exception {}", e);
+			throw new RuntimeException("Failed to find nearest locations of latitude/longitude", e.getCause());
 		}
 	}
-
+	
+	private String encodedUrl(final String url){
+		try {
+			return URLEncoder.encode(url, StandardCharsets.UTF_8.name());
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException("Failed to encode url", e.getCause());
+		}
+	}
 }
