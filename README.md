@@ -1,8 +1,6 @@
 #  Assignment-spring for SS
 ## Resources
 -Google GepCoding Map Service : https://developers.google.com/maps/documentation/geocoding/intro
--http://www.liquibase.org/bestpractices.html
-###http://aparnachaudhary.me/liquibase-refcard/
 
 
 ## Features
