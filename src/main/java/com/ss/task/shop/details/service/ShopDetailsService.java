@@ -7,6 +7,7 @@ import static com.ss.task.dao.shop.details.constants.ShopDetailsConstants.LATITU
 import static com.ss.task.dao.shop.details.constants.ShopDetailsConstants.LONGITUDE_KEY;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.ss.task.geo.response.AddressComponent;
 import com.ss.task.geo.response.GeoCodingResponse;
 import com.ss.task.geo.response.Results;
 import com.ss.task.shop.details.dao.ShopDetailsDao;
@@ -56,8 +58,8 @@ public class ShopDetailsService {
 		final ShopAddress address = shopDetails.getShopAddress();
 		final Map<String, String> latLngMap = shopDetailsGeoService.getLngLatByAddress(address.getAddress());
 		if (!latLngMap.isEmpty()) {
-			final ShopDetailsVo shopDetailsVo = new ShopDetailsVo(shopDetails.getShopName(), address.getAddress(), address.getAddressPostCode(),
-					latLngMap.get(LATITUDE_KEY), latLngMap.get(LONGITUDE_KEY));
+			final ShopDetailsVo shopDetailsVo = new ShopDetailsVo(shopDetails.getShopName(), address.getAddress(),
+					address.getAddressPostCode(), latLngMap.get(LATITUDE_KEY), latLngMap.get(LONGITUDE_KEY));
 			SHOP_LIST.add(shopDetailsVo);
 			return shopDetailsDao.saveShopDetails(shopDetailsVo);
 		}
@@ -69,22 +71,32 @@ public class ShopDetailsService {
 		final String latlngParam = custLat + "," + custLng;
 		final GeoCodingResponse codingResponse = shopDetailsGeoService.getNearestShopDetails(latlngParam);
 		Results[] results = codingResponse.getResults();
-		double inpLat = Double.valueOf(custLat);
-		double inpLng = Double.valueOf(custLng);
 		final List<ShopDetailsVo> output = new ArrayList<>();
+		final Map<String, ShopDetailsVo> tempMap = new HashMap<>();
 		for (int i = 0; i < results.length; i++) {
 			Results result = results[i];
-			String formatedAddress = result.getFormattedAddress();
-			double lat = result.getGeometry().getLocation().getLat();
-			double lng = result.getGeometry().getLocation().getLng();
-			for (ShopDetailsVo shopDetailsVo : SHOP_LIST) {
-				if (lat == inpLat && lng == inpLng) {
-					output.add(shopDetailsVo);
-				} else if (formatedAddress.contains(shopDetailsVo.getShopAddress())) {
-					output.add(shopDetailsVo);
+			AddressComponent[] addressComponents = result.getAddressComponents();
+			for (int j = 0; j < addressComponents.length; j++) {
+				AddressComponent addressComponent = addressComponents[j];
+				addressComponent.getTypes();
+				getResult(tempMap, addressComponent);
+			}
+		}
+		output.addAll(tempMap.values());
+		return output;
+	}
+
+	private void getResult(final Map<String, ShopDetailsVo> tempMap, AddressComponent addressComponent) {
+		for (String types : addressComponent.getTypes()) {
+			if (types.equalsIgnoreCase("postal_code")) {
+				for (ShopDetailsVo shopDetailsVo : SHOP_LIST) {
+					String pCode = Integer.toString(shopDetailsVo.getShopPostalCode());
+					if (addressComponent.getLongName().equalsIgnoreCase(pCode)
+							|| addressComponent.getShortName().equalsIgnoreCase(pCode)) {
+						tempMap.put(shopDetailsVo.getShopName(), shopDetailsVo);
+					}
 				}
 			}
 		}
-		return output;
 	}
 }

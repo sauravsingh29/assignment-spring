@@ -4,14 +4,18 @@ import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import io.swagger.annotations.ApiModelProperty;
+
 public class ShopAddress implements Serializable {
 
 	private static final long serialVersionUID = -8816046099625445967L;
 
-	@JsonProperty("address")
+	@JsonProperty(value = "address", required = true)
+	@ApiModelProperty(notes = "The sub-locality, locality, area, city, states where shop is situataed", required = true)
 	private String address;
 
-	@JsonProperty("postCode")
+	@JsonProperty(value = "postCode", required = true)
+	@ApiModelProperty(notes = "Shop location zip code/postal code", required = true)
 	private Integer addressPostCode;
 
 	/**

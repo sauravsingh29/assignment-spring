@@ -74,4 +74,5 @@ public class ShopDetailsVo implements Serializable {
 				.append(shopPostalCode).append(", shopLng=").append(shopLng).append(", shopLat=").append(shopLat);
 		return builder.toString();
 	}
+	
 }

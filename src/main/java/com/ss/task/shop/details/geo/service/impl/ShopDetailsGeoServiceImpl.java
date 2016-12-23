@@ -3,9 +3,6 @@ package com.ss.task.shop.details.geo.service.impl;
 import static com.ss.task.dao.shop.details.constants.ShopDetailsConstants.LATITUDE_KEY;
 import static com.ss.task.dao.shop.details.constants.ShopDetailsConstants.LONGITUDE_KEY;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,14 +41,12 @@ public class ShopDetailsGeoServiceImpl implements ShopDetailsGeoService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.ss.task.shop.details.geo.service.ShopDetailsGeoService#
-	 * getLngLatByAddress(java.lang.String)
+	 * @see com.ss.task.shop.details.geo.service.ShopDetailsGeoService#getLngLatByAddress(java.lang.String)
 	 */
 	@Override
 	public Map<String, String> getLngLatByAddress(final String address) throws RuntimeException {
 		LOGGER.debug("Started method {} - params {}", "getLngLatByAddress", address);
-		final String url = geoLatngUrl + encodedUrl(address);
-		System.out.println(url);
+		final String url = geoLatngUrl + address;
 		try {
 			final GeoCodingResponse geocodingResult = restTemplate.getForObject(url, GeoCodingResponse.class);
 			final Map<String, String> returnMap = new HashMap<>();
@@ -70,20 +65,12 @@ public class ShopDetailsGeoServiceImpl implements ShopDetailsGeoService {
 	@Override
 	public GeoCodingResponse getNearestShopDetails(final String latlngParam) throws RuntimeException {
 		LOGGER.debug("Started method {} - params {}", "getNearestShopDetails", latlngParam);
-		final String url = geoLocationUrl + encodedUrl(latlngParam);
-		try{
+		final String url = geoLocationUrl + latlngParam;
+		try {
 			return restTemplate.getForObject(url, GeoCodingResponse.class);
 		} catch (RestClientException e) {
 			LOGGER.error("Failed to find location lng lat. Exception {}", e);
 			throw new RuntimeException("Failed to find nearest locations of latitude/longitude", e.getCause());
-		}
-	}
-	
-	private String encodedUrl(final String url){
-		try {
-			return URLEncoder.encode(url, StandardCharsets.UTF_8.name());
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException("Failed to encode url", e.getCause());
 		}
 	}
 }

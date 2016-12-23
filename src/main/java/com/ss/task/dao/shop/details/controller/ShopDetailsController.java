@@ -22,6 +22,10 @@ import com.ss.task.shop.details.request.ShopDetails;
 import com.ss.task.shop.details.request.vo.ShopDetailsVo;
 import com.ss.task.shop.details.service.ShopDetailsService;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+
 /**
  * @author Saurav Singh
  *
@@ -36,13 +40,15 @@ public class ShopDetailsController {
 	@Qualifier("shopDetailsService")
 	private ShopDetailsService shopDetailsService;
 
+	@ApiOperation(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, httpMethod = "POST", value = "", response = String.class, notes = "Save provided payload once we find latitude and longitude of location")
 	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> saveShopDetails(@RequestBody ShopDetails shopDetails) {
 		LOGGER.debug("Started endpoint method {}, params - {}", "saveShopDetails", shopDetails.toString());
 		try {
 			int saveCount = shopDetailsService.saveShopDetails(shopDetails);
 			if (saveCount == 0) {
-				return new ResponseEntity<String>("Unable to find latitude and logitude of requested shop location, please check and resubmit again",
+				return new ResponseEntity<String>(
+						"Unable to find latitude and logitude of requested shop location, please check and resubmit again",
 						HttpStatus.BAD_REQUEST);
 			}
 		} catch (Exception e) {
@@ -54,10 +60,16 @@ public class ShopDetailsController {
 		return new ResponseEntity<String>("Shop address added!", HttpStatus.OK);
 	}
 
-	@RequestMapping(method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> getNearByShops(@RequestParam(required = true, name = "customerLatitude") String customerLatitude,
+	@ApiOperation(consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, httpMethod = "GET", value = "", response = ShopDetailsVo.class, notes = "Find List of shop matching to provided latitude and longitude", responseContainer = "List")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "customerLatitude", value = "Laitude of Customer's location", required = true, dataType = "string", paramType = "query"),
+			@ApiImplicitParam(name = "customerLongitude", value = "Longitude of Customer's location", required = true, dataType = "string", paramType = "query") })
+	@RequestMapping(method = RequestMethod.GET, consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> getNearByShops(
+			@RequestParam(required = true, name = "customerLatitude") String customerLatitude,
 			@RequestParam(required = true, name = "customerLongitude") String customerLongitude) {
-		LOGGER.debug("Started endpoint method {}, params - {}", "getNearByShops", new Object[] { customerLatitude, customerLongitude });
+		LOGGER.debug("Started endpoint method {}, params - {}", "getNearByShops",
+				new Object[] { customerLatitude, customerLongitude });
 		List<ShopDetailsVo> output = null;
 		try {
 			output = shopDetailsService.findShopNearByLatLng(customerLatitude, customerLongitude);

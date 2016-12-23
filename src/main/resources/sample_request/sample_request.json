@@ -1,0 +1,27 @@
+{
+	"shopName" : "Sai Curtains",
+	"shopAddress" : {
+		"address" : "Jyotiba Nagar, Talawade, Pune, Maharashtra ",
+		"postCode" : 411062
+	}
+	
+}
+
+{
+	"shopName" : "Shradha Hedau Footwear Couture Pvt Ltd",
+	"shopAddress" : {
+		"address" : "Sangharsh chowk, Kharadi Road, Chandan Nagar, Pune, Maharashtra",
+		"postCode" : 411014
+	}
+	
+}
+
+{
+	"shopName" : "Huma Bakery",
+	"shopAddress" : {
+		"address" : "Sahyog Nagar, Talawade Rd, Ganesh Nagar, Talwade, Pimpri-Chinchwad, Maharashtra",
+		"postCode" : 412114
+	}
+	
+}
+

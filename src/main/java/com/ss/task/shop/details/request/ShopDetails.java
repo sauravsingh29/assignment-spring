@@ -8,6 +8,8 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * @author Saurav
  *
@@ -17,10 +19,12 @@ public class ShopDetails implements Serializable {
 
 	private static final long serialVersionUID = -4333559486797401949L;
 
-	@JsonProperty("shopName")
+	@JsonProperty(value = "shopName", required = true)
+    @ApiModelProperty(notes = "The name of the shop", required = true)
 	private String shopName;
 
-	@JsonProperty("shopAddress")
+	@JsonProperty(value = "shopAddress", required = true)
+	@ApiModelProperty(notes = "Shop address compoment, which consist of various fields", required = true)
 	private ShopAddress shopAddress;
 
 	/**
